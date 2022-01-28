@@ -1,12 +1,22 @@
 import pygame
 
+# 시작 화면 보여주기
+
 
 def display_start_screen():
     pygame.draw.circle(screen, WHITE, start_button.center, 60, 5)
 
+# 게임 화면 보여주기
 
-def displat_game_screen():
-    pass
+
+def display_game_screen():
+    print('Game Start')
+
+
+def check_buttons(pos):
+    global start
+    if start_button.collidepoint(pos):
+        start = True
 
 
 pygame.init()
@@ -29,20 +39,25 @@ start = False
 
 running = True
 while running:
-    # mouse_pos = None
+    click_pos = None
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONUP:
-            mouse_pos = pygame.mouse.get_pos()
-            print(mouse_pos)
+            click_pos = pygame.mouse.get_pos()
+            print(click_pos)
 
     # 화면 전체를 까맣게 칠함
     screen.fill(BLACK)
+
     if start:
-        display_game_screen()
+        display_game_screen()  # 게임 화면 표시
     else:
         display_start_screen()  # 시작 화면 표시
+
+    # 사용자가 클릭한 좌표값이 있다면 (어딘가 클릭했다면)
+    if click_pos:
+        check_buttons(click_pos)
 
     # 화면 업데이트
     pygame.display.update()
