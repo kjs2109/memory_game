@@ -55,6 +55,10 @@ def shuffle_grid(number_count):
 
 def display_start_screen():
     pygame.draw.circle(screen, WHITE, start_button.center, 60, 5)
+    msg = game_font.render(f'{curr_level}', True, WHITE)
+    msg_rect = msg.get_rect(center=start_button.center)
+
+    screen.blit(msg, msg_rect)
 
 # 게임 화면 보여주기
 
@@ -89,7 +93,7 @@ def check_buttons(pos):  # 버튼 클릭 이벤트 발생시 실행된다. 크�
 
 
 def check_number_buttons(pos):
-    global hidden
+    global hidden, start, curr_level
 
     for button in number_buttons:
         if button.collidepoint(pos):
@@ -99,8 +103,29 @@ def check_number_buttons(pos):
                 if not hidden:
                     hidden = True
             else:
-                print('worng')
+                game_over()
             break
+# 모든 숫자를 다 맞혔다면? 레벨을 높여서 다시 시작 화면으로 감
+    if len(number_buttons) == 0:
+        start = False  # start가 False면 display_start_screen() 함수가 실행된다.
+        hidden = False  # hidden이 False면 숫자가 보임, 그 후 일전 시간이 지나면 hidden = True로 바뀜
+        curr_level += 1
+        setup(curr_level)  # setup에서 모든 것이 재설정 됨, button 리스트도 다시 생성
+
+
+# 게임 종료 처리. 메시지도 보여줌
+
+
+def game_over():
+    global running
+    running = False
+
+    msg = game_font.render(f'Your level is {curr_level}', True, WHITE)
+    msg_rect = msg.get_rect(center=(screen_width/2, screen_height/2))
+    screen.blit(msg, msg_rect)
+
+    # screen.fill(BLACK)
+    screen.blit(msg, msg_rect)
 
 
 pygame.init()
@@ -127,6 +152,9 @@ number_buttons = []  # 플레이어가 눌러야 하는 버튼들
 display_time = None  # 숫자를 보여주는 시간
 start_ticks = None  # 시간 계산, 현재의 시간정보를 저장
 
+# 현재 레벨
+curr_level = 1
+
 # 게임 시작 여부
 start = False
 
@@ -134,7 +162,7 @@ start = False
 hidden = False
 
 # 게임 시작 전에 게임 설정 함수 수행
-setup(1)
+setup(curr_level)
 
 running = True
 while running:
@@ -160,5 +188,7 @@ while running:
 
     # 화면 업데이트
     pygame.display.update()
+
+pygame.time.delay(5000)
 
 pygame.quit()
